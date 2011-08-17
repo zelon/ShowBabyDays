@@ -2,5 +2,5 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:minWidth="294dp"
     android:minHeight="72dp"
-    android:updatePeriodMillis="86400000"
+    android:updatePeriodMillis="32400000"
     android:initialLayout="@layout/baby_days_appwidget" />

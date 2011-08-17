@@ -2,7 +2,6 @@ package com.wimy.android.babydays;
 
 import java.util.Calendar;
 import java.util.TimeZone;
-
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -23,7 +22,7 @@ public class BabyDaysAppWidgetProvider extends AppWidgetProvider
 	public void onEnabled(Context context)
 	{
 		super.onEnabled(context);
-		Log.i("zelon","onEnabled");
+		Log.i("ShowBabyDays","onEnabled");
 		
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_DATE_CHANGED);
@@ -34,12 +33,12 @@ public class BabyDaysAppWidgetProvider extends AppWidgetProvider
 	public void onReceive(Context context, Intent intent)
 	{
         String action = intent.getAction();
-        Log.i("zelon", "recv action : " + action);
+        Log.i("ShowBabyDays", "onReceive() : " + action);
         if (action.equals(Intent.ACTION_TIME_CHANGED)
                 || action.equals(Intent.ACTION_DATE_CHANGED)
                 )
         {
-			Log.i("zelon", "on recv DateChangeReceiver.onReceive date_changed");
+			Log.i("ShowBabyDays", "on recv DateChangeReceiver.onReceive date_changed");
 			updateUI();
         }
         
@@ -48,23 +47,23 @@ public class BabyDaysAppWidgetProvider extends AppWidgetProvider
 
 	private void updateUI()
 	{
-		Log.i("zelon", "updateUI()");
+		Log.i("ShowBabyDays", "updateUI()");
 		
 		if ( sContext == null )
 		{
-			Log.i("zelon", "mContext is null");
+			Log.i("ShowBabyDays", "mContext is null");
 			return;
 		}
 		
 		if ( sAppWidgetManager == null )
 		{
-			Log.i("zelon", "mAppWidgetManager is null");
+			Log.i("ShowBabyDays", "mAppWidgetManager is null");
 			return;
 		}
 		
 		if ( sAppWidgetIds == null )
 		{
-			Log.i("zelon", "mAppWidgetIds is null");
+			Log.i("ShowBabyDays", "mAppWidgetIds is null");
 			return;
 		}
 		
@@ -90,7 +89,7 @@ public class BabyDaysAppWidgetProvider extends AppWidgetProvider
 
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
 	{
-		Log.i("zelon", "onUpdate()");
+		Log.i("ShowBabyDays", "onUpdate()");
 		
 		sContext = context;
 		sAppWidgetManager = appWidgetManager;
@@ -101,7 +100,7 @@ public class BabyDaysAppWidgetProvider extends AppWidgetProvider
 
     private String getCurrentTime()
     {
-    	Calendar now = Calendar.getInstance(TimeZone.getTimeZone("KST"));
+    	Calendar now = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     	now.setTimeInMillis(System.currentTimeMillis());
 
     	return now.getTime().toLocaleString();
@@ -119,36 +118,49 @@ public class BabyDaysAppWidgetProvider extends AppWidgetProvider
     
     private long getWeek()
     {
-    	Calendar start = Calendar.getInstance(TimeZone.getTimeZone("KST"));
-    	start.set(2011, 1, 15);
+    	Calendar start = getStartCalendar();
     	
-    	Calendar now = Calendar.getInstance(TimeZone.getTimeZone("KST"));
+    	Calendar now = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     	now.setTimeInMillis(System.currentTimeMillis());
     	
     	long diffMils = now.getTimeInMillis() - start.getTimeInMillis(); 
     	long diffDays = diffMils / ( 1000 * 60 * 60 * 24 );
     	
-    	Log.i("zelon", "diffDays : " + diffDays);
+    	Log.i("ShowBabyDays", "diffDays : " + diffDays);
     	
     	long diffWeek = diffDays / 7;
     	
     	return diffWeek + 1;
     }
     
+    private static Calendar getStartCalendar()
+    {
+    	Calendar start = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    	start.set(2011, 1, 15, 0, 0, 0);
+    	
+    	return start;
+    }
+    
 	public static String makeString()
     {
-    	Calendar start = Calendar.getInstance(TimeZone.getTimeZone("KST"));
-    	start.set(2011, 1, 15);
+    	Calendar start = getStartCalendar();
     	
-    	Calendar now = Calendar.getInstance(TimeZone.getTimeZone("KST"));
+    	Calendar now = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     	now.setTimeInMillis(System.currentTimeMillis());
+    	now.set(Calendar.HOUR_OF_DAY, 0);
+    	now.set(Calendar.SECOND, 0);
+    	now.set(Calendar.MILLISECOND, 0);
     	
     	StringBuilder sb = new StringBuilder();
     	
     	long diffMils = now.getTimeInMillis() - start.getTimeInMillis(); 
+    	Log.i("ShowBabyDays", "diffMils : " + diffMils);
+
     	long diffDays = diffMils / ( 1000 * 60 * 60 * 24 );
+    	Log.i("ShowBabyDays", "diffDays : " + diffDays);
     	
-    	Log.i("zelon", "diffDays : " + diffDays);
+    	long remainDiff = diffMils % ( 1000 * 60 * 60 * 24 );
+    	Log.i("ShowBabyDays", "remainDays : " + remainDiff);
     	
     	long diffWeek = diffDays / 7;
     	long remainDays = diffDays - (diffWeek * 7);
